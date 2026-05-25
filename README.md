@@ -38,3 +38,8 @@ To deploy this application, follow these steps:
 - **Frontend**: React 19, TypeScript, Tailwind CSS, Recharts for analytics.
 - **Backend**: Express, Firebase Admin for data persistence.
 - **Build**: Vite with TypeScript support.
+
+
+## Deployment Notes (Cloudflare Workers vs Node)
+
+This app requires a Node runtime for `server.ts` APIs. If you deploy frontend-only static assets to Workers, `/api/*` endpoints will fail. Deploy backend to a Node-compatible host (Cloud Run, Render, Fly, etc.) and serve frontend from same origin or configure reverse proxy/API base URL.
