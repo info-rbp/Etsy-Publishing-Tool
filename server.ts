@@ -8,6 +8,38 @@ import axios from "axios";
 
 admin.initializeApp();
 const db = admin.firestore();
+const OAUTH_STATE_TTL_MS = 10 * 60 * 1000;
+
+function requiredEnv(name: string) {
+  const value = process.env[name];
+  if (!value) throw new Error(`Missing required env var: ${name}`);
+  return value;
+}
+
+function validateEnv() {
+  const missingCore = ["APP_URL"].filter((k) => !process.env[k]);
+  if (missingCore.length) throw new Error(`Missing core env vars: ${missingCore.join(", ")}`);
+  const missingEtsy = ["ETSY_CLIENT_ID", "ETSY_CLIENT_SECRET"].filter((k) => !process.env[k]);
+  const missingSquare = ["SQUARE_CLIENT_ID", "SQUARE_CLIENT_SECRET"].filter((k) => !process.env[k]);
+  if (missingEtsy.length) console.warn(`Etsy connect disabled. Missing: ${missingEtsy.join(", ")}`);
+  if (missingSquare.length) console.warn(`Square connect disabled. Missing: ${missingSquare.join(", ")}`);
+}
+
+async function createOAuthState(provider: "etsy" | "square") {
+  const token = crypto.randomBytes(24).toString("hex");
+  await db.collection("oauth_states").doc(token).set({ provider, expiresAt: Date.now() + OAUTH_STATE_TTL_MS, createdAt: Date.now() });
+  return token;
+}
+
+async function verifyOAuthState(provider: "etsy" | "square", state: string) {
+  const ref = db.collection("oauth_states").doc(state);
+  const snap = await ref.get();
+  if (!snap.exists) return false;
+  const data = snap.data() as any;
+  if (data.provider !== provider || Date.now() > data.expiresAt) return false;
+  await ref.delete();
+  return true;
+}
 
 const oauthStates = new Map<string, {provider: "etsy"|"square"; expiresAt:number}>();
 const OAUTH_STATE_TTL_MS = 10 * 60 * 1000;

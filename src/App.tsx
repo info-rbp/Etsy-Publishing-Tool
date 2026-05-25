@@ -1,3 +1,4 @@
+const API_BASE = (import.meta as any).env?.VITE_API_BASE_URL || "";
 import { useState, useEffect, useRef } from 'react';
 import Papa from 'papaparse';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -47,13 +48,13 @@ export default function App() {
   }, []);
 
   const handleConnectEtsy = async () => {
-    const response = await fetch('/api/auth/etsy/url');
+    const response = await fetch(`${API_BASE}/api/auth/etsy/url`);
     const { url } = await response.json();
     window.open(url, 'etsy_auth', 'width=600,height=700');
   };
 
   const handleConnectSquare = async () => {
-    const response = await fetch('/api/auth/square/url');
+    const response = await fetch(`${API_BASE}/api/auth/square/url`);
     const { url } = await response.json();
     window.open(url, 'square_auth', 'width=600,height=700');
   };
