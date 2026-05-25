@@ -29,6 +29,20 @@ If you deploy only static assets to Cloudflare Workers Pages, `GET /api/*` will 
 - Mutating: listing patch/delete, sync, import.
 - OAuth state is persisted in Firestore (`oauth_states`) with TTL metadata and one-time consumption.
 
+## Build and Run
+
+```bash
+npm install
+npm run build
+npm start
+```
+
+## Regression checks
+
+```bash
+npm run lint
+npm run build
+```
 - **Frontend**: React 19, TypeScript, Tailwind CSS, Recharts for analytics.
 - **Backend**: Express, Firebase Admin for data persistence.
 - **Build**: Vite with TypeScript support.

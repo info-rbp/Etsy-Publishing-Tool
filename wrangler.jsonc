@@ -1,4 +1,10 @@
 {
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "etsy-publishing-tool",
+  "compatibility_date": "2026-05-25",
+  "assets": {
+    "directory": "./dist"
+  }
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "etsy-publishing-tool",
   "compatibility_date": "2026-05-25",
