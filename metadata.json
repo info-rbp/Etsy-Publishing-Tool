@@ -1,0 +1,6 @@
+{
+  "name": "Etsy and Square Sync",
+  "description": "Connect your Etsy shop and Square account to manage listings and synchronize inventory.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
