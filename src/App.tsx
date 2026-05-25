@@ -30,8 +30,8 @@ export default function App() {
 
   const fetchListings = () => {
     Promise.all([
-      fetch(`${API_BASE}/api/status`).then((r) => (r.ok ? r.json() : { etsy: false, square: false, canConnectEtsy: false, canConnectSquare: false })),
-      fetch(`${API_BASE}/api/etsy/listings`).then((r) => (r.ok ? r.json() : []))
+      fetch('/api/status').then((r) => (r.ok ? r.json() : { etsy: false, square: false, canConnectEtsy: false, canConnectSquare: false })),
+      fetch('/api/etsy/listings').then((r) => (r.ok ? r.json() : []))
     ]).then(([status, currentListings]) => {
       setConnections(status);
       setListings(Array.isArray(currentListings) ? currentListings : []);
@@ -82,7 +82,7 @@ export default function App() {
         setImportErrors(bad);
         if (!good.length) return;
 
-        const resp = await fetch(`${API_BASE}/api/listings/import`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rows: good }) });
+        const resp = await fetch('/api/listings/import', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rows: good }) });
         const data = await resp.json();
         if (!resp.ok) throw new Error(data.error || 'Import failed');
         setStatusMessage(data.message || 'Import successful');
@@ -102,9 +102,9 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
-  const handleUpdateListing = async () => { if (!selectedListing) return; await fetch(`${API_BASE}/api/etsy/listings/${selectedListing.listing_id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editData) }); setSelectedListing(null); fetchListings(); };
-  const handleDeleteListing = async () => { if (!selectedListing) return; await fetch(`${API_BASE}/api/etsy/listings/${selectedListing.listing_id}`, { method: 'DELETE' }); setSelectedListing(null); fetchListings(); };
-  const handleSyncInventory = async () => { setSyncing(true); try { const r = await fetch(`${API_BASE}/api/etsy/sync-inventory`, { method: 'POST' }); const d = await r.json(); alert(d.message || d.error || 'Done'); fetchListings(); } finally { setSyncing(false); } };
+  const handleUpdateListing = async () => { if (!selectedListing) return; await fetch(`/api/etsy/listings/${selectedListing.listing_id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editData) }); setSelectedListing(null); fetchListings(); };
+  const handleDeleteListing = async () => { if (!selectedListing) return; await fetch(`/api/etsy/listings/${selectedListing.listing_id}`, { method: 'DELETE' }); setSelectedListing(null); fetchListings(); };
+  const handleSyncInventory = async () => { setSyncing(true); try { const r = await fetch('/api/etsy/sync-inventory', { method: 'POST' }); const d = await r.json(); alert(d.message || d.error || 'Done'); fetchListings(); } finally { setSyncing(false); } };
 
   return <div className="flex h-screen bg-slate-50 font-sans text-slate-900 overflow-hidden">
     <aside className="w-64 bg-slate-900 flex flex-col h-full"><div className="p-6 text-white font-bold text-xl">SyncBridge</div>

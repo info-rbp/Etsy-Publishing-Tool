@@ -29,17 +29,11 @@ If you deploy only static assets to Cloudflare Workers Pages, `GET /api/*` will 
 - Mutating: listing patch/delete, sync, import.
 - OAuth state is persisted in Firestore (`oauth_states`) with TTL metadata and one-time consumption.
 
-## Build and Run
+- **Frontend**: React 19, TypeScript, Tailwind CSS, Recharts for analytics.
+- **Backend**: Express, Firebase Admin for data persistence.
+- **Build**: Vite with TypeScript support.
 
-```bash
-npm install
-npm run build
-npm start
-```
 
-## Regression checks
+## Deployment Notes (Cloudflare Workers vs Node)
 
-```bash
-npm run lint
-npm run build
-```
+This app requires a Node runtime for `server.ts` APIs. If you deploy frontend-only static assets to Workers, `/api/*` endpoints will fail. Deploy backend to a Node-compatible host (Cloud Run, Render, Fly, etc.) and serve frontend from same origin or configure reverse proxy/API base URL.
