@@ -13,6 +13,7 @@ export default function App() {
   const [selectedListing, setSelectedListing] = useState<any | null>(null);
   const [editData, setEditData] = useState({ title: '', description: '', price: '', quantity: '' });
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [threshold, setThreshold] = useState(5);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -107,7 +108,7 @@ export default function App() {
     if (!selectedListing) return;
     try {
       const response = await fetch(`/api/etsy/listings/${selectedListing.listing_id}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editData)
       });
@@ -120,6 +121,21 @@ export default function App() {
       setSelectedListing(null);
     } catch (err) {
       console.error("Error updating listing:", err);
+    }
+  };
+
+  const handleSyncInventory = async () => {
+    setSyncing(true);
+    try {
+      const response = await fetch('/api/etsy/sync-inventory', { method: 'POST' });
+      const data = await response.json();
+      alert(data.message || (data.error ? `Error: ${data.error}` : 'Sync complete'));
+      fetchListings();
+    } catch (err) {
+      console.error("Sync error:", err);
+      alert("Failed to sync inventory.");
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -151,6 +167,13 @@ export default function App() {
         <header className="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between">
           <h1 className="text-lg font-semibold">Listing Dashboard</h1>
           <div className="flex gap-2">
+            <button
+              onClick={handleSyncInventory}
+              disabled={syncing || !connections.etsy || !connections.square}
+              className={`px-4 py-2 rounded-lg text-sm text-white ${syncing || !connections.etsy || !connections.square ? 'bg-slate-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+            >
+              {syncing ? 'Syncing...' : 'Sync Now'}
+            </button>
             <button onClick={() => fileInputRef.current?.click()} className="px-4 py-2 bg-slate-100 rounded-lg text-sm text-slate-700 hover:bg-slate-200">Import CSV</button>
             <input type="file" ref={fileInputRef} onChange={handleImportCSV} accept=".csv" className="hidden" />
             <button onClick={handleExportCSV} className="px-4 py-2 bg-slate-900 rounded-lg text-sm text-white hover:bg-slate-800">Export CSV</button>
