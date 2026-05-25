@@ -17,10 +17,13 @@
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
     "firebase-admin": "^13.10.0",
+    "framer-motion": "^12.40.0",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
+    "papaparse": "^5.5.3",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
+    "recharts": "^3.8.1",
     "square": "^44.1.0",
     "vite": "^6.2.3"
   },
